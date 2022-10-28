@@ -13,17 +13,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/setup-asdf
         with:
-          SetupCommand: './setup.bash'
+          SetupCommand: "./setup.bash"
       - run: npm ci
       - run: npm run all
   # make sure the action works on a clean machine without building
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ./
         with:
           GithubToken: ${{secrets.GITHUB_TOKEN}}
