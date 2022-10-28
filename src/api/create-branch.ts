@@ -1,8 +1,8 @@
 import {Maybe} from './types'
-import {getOctokit} from '@actions/github'
+import {Octokit} from '@octokit/rest'
 
 type CreateBranchFactoryProps = {
-  client: ReturnType<typeof getOctokit>
+  client: Octokit
   owner: string
   repo: string
 }

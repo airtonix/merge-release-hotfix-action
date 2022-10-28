@@ -1,9 +1,9 @@
 import * as core from '@actions/core'
 import {Maybe} from './types'
-import {getOctokit} from '@actions/github'
+import {Octokit} from '@octokit/rest'
 
 type FindBranchPrFactoryProps = {
-  client: ReturnType<typeof getOctokit>
+  client: Octokit
   owner: string
   repo: string
 }

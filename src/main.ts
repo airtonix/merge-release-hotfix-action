@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import {context} from '@actions/github'
+import {Context} from './context'
 import {createApi} from './api'
 import {createContent} from './create-content'
 import {createOrUpdatePr} from './create-or-update-pr'
@@ -7,14 +7,15 @@ import {getOrCreateBranch} from './get-or-create-branch'
 
 async function run(): Promise<void> {
   try {
+    const context = new Context()
     const token: string = core.getInput('GithubToken')
     const targetRefs: string = core.getInput('TargetRefs')
     const sourceRef: string = core.getInput('sourceRef')
     const prBranchTemplate: string = core.getInput('prBranchTemplate')
     const prTitleTemplate: string = core.getInput('prTitleTemplate')
     const prBodyTemplate: string = core.getInput('prBodyTemplate')
-    const owner = context.repo.owner
     const repo = context.repo.repo
+    const owner = context.repo.owner
 
     const api = createApi({
       owner,
