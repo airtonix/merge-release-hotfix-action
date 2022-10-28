@@ -22,7 +22,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: ./
+      - name: Self test
+        id: selftest
+        uses: ./
         with:
           GithubToken: ${{secrets.GITHUB_TOKEN}}
           SourceRef: ${{github.ref_name}}
