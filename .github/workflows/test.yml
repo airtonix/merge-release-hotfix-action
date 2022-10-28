@@ -14,10 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: |
-          npm install
-      - run: |
-          npm run all
+      - uses: .github/actions/setup-asdf
+      - run: npm ci
+      - run: npm run all
   # make sure the action works on a clean machine without building
   test:
     runs-on: ubuntu-latest
