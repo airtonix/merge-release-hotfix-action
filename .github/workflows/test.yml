@@ -24,4 +24,6 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./
         with:
-          milliseconds: 1000
+          GithubToken: ${{secrets.GITHUB_TOKEN}}
+          SourceRef: ${{github.ref_name}}
+          TargetRefs: main
