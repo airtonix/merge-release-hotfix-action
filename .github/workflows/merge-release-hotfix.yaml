@@ -26,4 +26,4 @@ jobs:
         with:
           GithubToken: ${{secrets.GITHUB_TOKEN}}
           SourceRef: ${{github.ref_name}}
-          TargetRefs: master
+          TargetRefs: main
