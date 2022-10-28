@@ -27,6 +27,8 @@ jobs:
       - uses: actions/checkout@v2
 
       - uses: ./.github/actions/setup-asdf
+        with:
+          SetupCommand: "./setup.bash"
 
       - name: Install dependencies
         run: npm ci
