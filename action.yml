@@ -1,11 +1,33 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+---
+name: Merge Release Hotfix
+description: |
+  creates a branch for the current release branch or updates one if it
+  does not exist. Then creates or updates a pull request.
+
+author: "Your name or organization here"
 inputs:
-  milliseconds: # change this
+  GithubToken:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: "auth token"
+  TargetRefs:
+    required: true
+    description: comma separated list of target refs
+  SourceRef:
+    required: true
+    description: where to create branch from to merge into sorucerefs
+  PrBranchNameTemplate:
+    required: false
+    description: "template used to populate the branch name"
+    default: "merge-hotfix/{{source}}-to-{{target}}"
+  PrTitleTemlate:
+    required: false
+    description: "template used to populate the PR title"
+    default: "merge-hotfix: {{source}}"
+  PrBodyTemplate:
+    required: false
+    description: "template used to populate the PR body"
+    default: "merge hotfixes from {{source}} to {{target}}"
+
 runs:
-  using: 'node16'
-  main: 'dist/index.js'
+  using: "node16"
+  main: "dist/index.js"
