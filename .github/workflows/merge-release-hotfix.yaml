@@ -1,0 +1,29 @@
+---
+name: "merge-release-hotfix"
+# rebuild any PRs and main branch changes
+"on":
+  push:
+    branches:
+      - release/*
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  # make sure the action works on a clean machine without building
+  test:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./
+        with:
+          GithubToken: ${{secrets.GITHUB_TOKEN}}
+          SourceRef: ${{github.ref_name}}
+          TargetRefs: master

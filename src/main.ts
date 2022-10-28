@@ -7,7 +7,7 @@ import {getOrCreateBranch} from './get-or-create-branch'
 
 async function run(): Promise<void> {
   try {
-    const token: string = core.getInput('Token')
+    const token: string = core.getInput('GithubToken')
     const targetRefs: string = core.getInput('TargetRefs')
     const sourceRef: string = core.getInput('sourceRef')
     const prBranchTemplate: string = core.getInput('prBranchTemplate')
