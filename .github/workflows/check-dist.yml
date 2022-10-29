@@ -6,7 +6,7 @@
 # from other source files.
 # We need to make sure the checked-in `index.js` actually matches
 # what we expect it to be.
-name: Check dist/
+name: DistCheck
 
 "on":
   push:
@@ -20,7 +20,7 @@ name: Check dist/
   workflow_dispatch:
 
 jobs:
-  check-dist:
+  verify:
     runs-on: ubuntu-latest
 
     steps:

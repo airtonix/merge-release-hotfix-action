@@ -2,7 +2,9 @@
 name: "merge-release-hotfix"
 # rebuild any PRs and main branch changes
 "on":
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - release/*
 
@@ -10,8 +12,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  # make sure the action works on a clean machine without building
-  test:
+  MergeReleaseHotfix:
+    if: github.event.pull_request.merged
+
     runs-on: ubuntu-latest
 
     permissions:
