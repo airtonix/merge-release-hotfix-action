@@ -13,7 +13,8 @@
     "package": "ncc build --source-map --license licenses.txt",
     "test": "jest --passWithNoTests",
     "prepare": "husky install",
-    "release": "auto shipit"
+    "release": "auto shipit",
+    "website": "echo \"<pre>pending</pre>\" > ./docs/index.html"
   },
   "repository": {
     "type": "git",

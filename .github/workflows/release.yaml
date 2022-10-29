@@ -23,7 +23,7 @@ jobs:
               with:
                   fetch-depth: 0
 
-            - uses: ./.github/actions/setup-tooling
+            - uses: ./.github/actions/setup-asdf
             - uses: ./.github/actions/setup-npm
 
             - name: Create Release
