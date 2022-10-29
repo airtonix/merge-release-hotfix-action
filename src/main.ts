@@ -11,10 +11,10 @@ async function run(): Promise<void> {
     const context = new Context()
     const token: string = core.getInput('GithubToken')
     const targetRefs: string = core.getInput('TargetRefs')
-    const sourceRef: string = core.getInput('sourceRef')
-    const prBranchTemplate: string = core.getInput('prBranchTemplate')
-    const prTitleTemplate: string = core.getInput('prTitleTemplate')
-    const prBodyTemplate: string = core.getInput('prBodyTemplate')
+    const sourceRef: string = core.getInput('SourceRef')
+    const prBranchTemplate: string = core.getInput('PrBranchNameTemplate')
+    const prTitleTemplate: string = core.getInput('PrTitleTemlate')
+    const prBodyTemplate: string = core.getInput('PrBodyTemplate')
     const repo = context.repo.repo
     const owner = context.repo.owner
 
@@ -38,13 +38,11 @@ async function run(): Promise<void> {
     )
 
     for (const targetRef of targetRefCollection) {
-      core.debug(`getOrCreateBranch ${targetRef}`)
       await getOrCreateBranch(api, templates, {
         sourceRef,
         targetRef
       })
 
-      core.debug(`createOrUpdatePr ${targetRef}`)
       await createOrUpdatePr(api, templates, {
         sourceRef,
         targetRef

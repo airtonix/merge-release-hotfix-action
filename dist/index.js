@@ -504,6 +504,7 @@ function getOrCreateBranch(api, templates, { sourceRef, targetRef }) {
             source: (0, content_1.slugify)(sourceRef),
             target: (0, content_1.slugify)(targetRef)
         });
+        core.info(`Get or create mergeBranch ${mergeBranchRef} for merging into ${targetRef}`);
         core.info(`Checking if mergeBranch exists ${mergeBranchRef}`);
         const potentiallyExistingBranch = yield api.getBranch(mergeBranchRef);
         if (potentiallyExistingBranch) {
@@ -581,10 +582,10 @@ function run() {
             const context = new context_1.Context();
             const token = core.getInput('GithubToken');
             const targetRefs = core.getInput('TargetRefs');
-            const sourceRef = core.getInput('sourceRef');
-            const prBranchTemplate = core.getInput('prBranchTemplate');
-            const prTitleTemplate = core.getInput('prTitleTemplate');
-            const prBodyTemplate = core.getInput('prBodyTemplate');
+            const sourceRef = core.getInput('SourceRef');
+            const prBranchTemplate = core.getInput('PrBranchNameTemplate');
+            const prTitleTemplate = core.getInput('PrTitleTemlate');
+            const prBodyTemplate = core.getInput('PrBodyTemplate');
             const repo = context.repo.repo;
             const owner = context.repo.owner;
             const api = (0, api_1.createApi)({
@@ -603,12 +604,10 @@ function run() {
              */
             const targetRefCollection = Array.from(new Set(targetRefs.split(',').map(branch => branch.trim())));
             for (const targetRef of targetRefCollection) {
-                core.debug(`getOrCreateBranch ${targetRef}`);
                 yield (0, get_or_create_branch_1.getOrCreateBranch)(api, templates, {
                     sourceRef,
                     targetRef
                 });
-                core.debug(`createOrUpdatePr ${targetRef}`);
                 yield (0, create_or_update_pr_1.createOrUpdatePr)(api, templates, {
                     sourceRef,
                     targetRef

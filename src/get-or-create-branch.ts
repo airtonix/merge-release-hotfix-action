@@ -21,6 +21,11 @@ export async function getOrCreateBranch(
     source: slugify(sourceRef),
     target: slugify(targetRef)
   })
+
+  core.info(
+    `Get or create mergeBranch ${mergeBranchRef} for merging into ${targetRef}`
+  )
+
   core.info(`Checking if mergeBranch exists ${mergeBranchRef}`)
   const potentiallyExistingBranch = await api.getBranch(mergeBranchRef)
   if (potentiallyExistingBranch) {
