@@ -1,25 +1,32 @@
 import * as core from '@actions/core'
-import {context} from '@actions/github'
+
+import {Context} from './context/context'
 import {createApi} from './api'
-import {createContent} from './create-content'
 import {createOrUpdatePr} from './create-or-update-pr'
 import {getOrCreateBranch} from './get-or-create-branch'
+import {createTemplateFactory} from './content'
 
 async function run(): Promise<void> {
   try {
-    const token: string = core.getInput('Token')
+    const context = new Context()
+    const token: string = core.getInput('GithubToken')
     const targetRefs: string = core.getInput('TargetRefs')
     const sourceRef: string = core.getInput('sourceRef')
     const prBranchTemplate: string = core.getInput('prBranchTemplate')
     const prTitleTemplate: string = core.getInput('prTitleTemplate')
     const prBodyTemplate: string = core.getInput('prBodyTemplate')
-    const owner = context.repo.owner
     const repo = context.repo.repo
+    const owner = context.repo.owner
 
     const api = createApi({
       owner,
       repo,
       token
+    })
+    const templates = createTemplateFactory({
+      prBodyTemplate,
+      prBranchTemplate,
+      prTitleTemplate
     })
 
     /**
@@ -31,25 +38,12 @@ async function run(): Promise<void> {
     )
 
     for (const targetRef of targetRefCollection) {
-      const {body, mergeBranchRef, title} = createContent({
-        prBodyTemplate,
-        prBranchTemplate,
-        prTitleTemplate,
+      await getOrCreateBranch(api, templates, {
         sourceRef,
         targetRef
       })
 
-      await getOrCreateBranch({
-        api,
-        sourceRef,
-        mergeBranchRef
-      })
-
-      await createOrUpdatePr({
-        api,
-        title,
-        body,
-        mergeBranchRef,
+      await createOrUpdatePr(api, templates, {
         sourceRef,
         targetRef
       })
