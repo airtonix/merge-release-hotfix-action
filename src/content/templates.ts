@@ -2,12 +2,12 @@ import type {TemplateExecutor} from 'lodash'
 import kebabCase from 'lodash/kebabCase'
 import template from 'lodash/template'
 
-type CreateContentProps = {
+type CreateTemplateFactoryProps = {
   prTitleTemplate?: string
   prBodyTemplate?: string
   prBranchTemplate?: string
 }
-type CreateContentResult = {
+export type TemplateFactory = {
   renderTitle: TemplateExecutor
   renderBody: TemplateExecutor
   renderBranch: TemplateExecutor
@@ -17,11 +17,11 @@ export function slugify(text: string): string {
   return kebabCase(text.replace(/&/g, '-and-'))
 }
 
-export function createContent({
+export function createTemplateFactory({
   prTitleTemplate,
   prBodyTemplate,
   prBranchTemplate
-}: CreateContentProps): CreateContentResult {
+}: CreateTemplateFactoryProps): TemplateFactory {
   const templateSettings = {
     interpolate: /{{([\s\S]+?)}}/g
   }

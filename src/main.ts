@@ -4,7 +4,7 @@ import {Context} from './context/context'
 import {createApi} from './api'
 import {createOrUpdatePr} from './create-or-update-pr'
 import {getOrCreateBranch} from './get-or-create-branch'
-import {createContent, slugify} from './content'
+import {createTemplateFactory} from './content'
 
 async function run(): Promise<void> {
   try {
@@ -23,6 +23,11 @@ async function run(): Promise<void> {
       repo,
       token
     })
+    const templates = createTemplateFactory({
+      prBodyTemplate,
+      prBranchTemplate,
+      prTitleTemplate
+    })
 
     /**
      * Convert string into unique array of target branches to
@@ -33,36 +38,12 @@ async function run(): Promise<void> {
     )
 
     for (const targetRef of targetRefCollection) {
-      const {renderBody, renderBranch, renderTitle} = createContent({
-        prBodyTemplate,
-        prBranchTemplate,
-        prTitleTemplate
-      })
-
-      const mergeBranchRef = renderBranch({
-        source: sourceRef,
-        target: slugify(targetRef)
-      })
-      const title = renderTitle({
-        source: sourceRef,
-        target: targetRef
-      })
-      const body = renderBody({
-        source: sourceRef,
-        target: targetRef
-      })
-
-      await getOrCreateBranch({
-        api,
+      await getOrCreateBranch(api, templates, {
         sourceRef,
-        mergeBranchRef
+        targetRef
       })
 
-      await createOrUpdatePr({
-        api,
-        title,
-        body,
-        mergeBranchRef,
+      await createOrUpdatePr(api, templates, {
         sourceRef,
         targetRef
       })

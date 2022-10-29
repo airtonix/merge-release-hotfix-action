@@ -1,21 +1,24 @@
-import {Api} from './api'
+import {slugify} from './content'
+import type {Api} from './api'
+import type {TemplateFactory} from './content'
 
 type GetOrCreateBranchProps = {
   /** api wrapper */
-  api: Api
   /** gitref to create branch from */
   sourceRef: string
   /** branch name to ensure exists */
-  mergeBranchRef: string
+  targetRef: string
 }
 
-export async function getOrCreateBranch({
-  api,
-  sourceRef,
-  mergeBranchRef
-}: GetOrCreateBranchProps): Promise<
-  ReturnType<Api['getBranch'] | Api['createBranch']>
-> {
+export async function getOrCreateBranch(
+  api: Api,
+  templates: TemplateFactory,
+  {sourceRef, targetRef}: GetOrCreateBranchProps
+): Promise<ReturnType<Api['getBranch'] | Api['createBranch']>> {
+  const mergeBranchRef = templates.renderTitle({
+    source: sourceRef,
+    target: slugify(targetRef)
+  })
   const sourceBranch = await api.getBranch(sourceRef)
   if (!sourceBranch) throw Error('Source branch not found')
 

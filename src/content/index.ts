@@ -1,1 +1,2 @@
-export {createContent, slugify} from './templates'
+export {createTemplateFactory, slugify} from './templates'
+export type {TemplateFactory} from './templates'

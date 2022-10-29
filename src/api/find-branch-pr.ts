@@ -14,6 +14,10 @@ type FindPrProps = {
 }
 export type FindBranchPrResult = {
   number: number
+  title: string
+  body: string | null
+  base: {sha: string; ref: string}
+  head: {sha: string; ref: string}
 }
 
 export function FindBranchPrFactory({
@@ -39,7 +43,17 @@ export function FindBranchPrFactory({
 
     return pr
       ? {
-          number: pr.number
+          number: pr.number,
+          title: pr.title,
+          body: pr.body,
+          base: {
+            ref: pr.base.ref,
+            sha: pr.base.sha
+          },
+          head: {
+            ref: pr.head.ref,
+            sha: pr.head.sha
+          }
         }
       : undefined
   }
