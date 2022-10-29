@@ -18,13 +18,21 @@ jobs:
         with:
           SetupCommand: "./setup.bash"
       - run: npm ci
-      - run: npm run all
+      - run: npm run lint
+      - run: npm run format
+      - run: npm run types
+      - run: npm run build
+      - run: npm run package
+      - run: npm run test
+
   # make sure the action works on a clean machine without building
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./
+      - name: Self test
+        id: selftest
+        uses: ./
         with:
           GithubToken: ${{secrets.GITHUB_TOKEN}}
           SourceRef: ${{github.ref_name}}
