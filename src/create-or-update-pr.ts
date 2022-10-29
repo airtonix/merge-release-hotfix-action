@@ -1,6 +1,7 @@
 import * as core from '@actions/core'
-import {Api} from './api'
 import {exec} from '@actions/exec'
+
+import {Api} from './api'
 
 type CreateOrUpdatePrProps = {
   /** api wrapper */
@@ -27,7 +28,8 @@ export async function createOrUpdatePr({
   mergeBranchRef
 }: CreateOrUpdatePrProps): CreateOrUpdatePrResult {
   const pr = await api.findBranchPr({
-    targetRef
+    targetRef,
+    branchName: mergeBranchRef
   })
 
   if (!pr) {

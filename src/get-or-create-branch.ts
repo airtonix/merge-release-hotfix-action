@@ -16,7 +16,13 @@ export async function getOrCreateBranch({
 }: GetOrCreateBranchProps): Promise<
   ReturnType<Api['getBranch'] | Api['createBranch']>
 > {
-  let branch = await api.getBranch(mergeBranchRef)
-  if (!branch) branch = await api.createBranch(mergeBranchRef, sourceRef)
+  const sourceBranch = await api.getBranch(sourceRef)
+  if (!sourceBranch) throw Error('Source branch not found')
+
+  const branch = await api.createBranch({
+    branchName: mergeBranchRef,
+    sourceSha: sourceBranch.sha
+  })
+
   return branch
 }
