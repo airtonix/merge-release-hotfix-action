@@ -1,8 +1,6 @@
 # Merge Release Hotfix
 
-<a href="https://github.com/airtonix/merge-release-hotfix-action/actions/workflows/test.yml?branch=main&event=push">
-  <img src="https://github.com/airtonix/merge-release-hotfix-action/actions/workflows/test.yml/badge.svg?branch=main&event=push"/>
-</a>
+[![build-test](https://github.com/airtonix/merge-release-hotfix-action/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/airtonix/merge-release-hotfix-action/actions/workflows/test.yml)
 
 > Get your release hotfixes back into your mainline without tainting your release branches.
 
