@@ -1,7 +1,7 @@
 ---
 name: Merge Release Hotfix
 description: |
-  Accumulates changes from a source branch into an intermediary branch for merging into one or more other branches in order to keep the source branch free of other target changes.
+  Automatically prepare your release hotfixes for merge back into your development branch.
  
 
 author: "airtonix"
