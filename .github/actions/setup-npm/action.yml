@@ -1,0 +1,30 @@
+name: Install Dependencies with Npm
+
+description: installs or restores dependencies from/to cache
+
+runs:
+    using: "composite"
+
+    steps:
+        - name: Get npm cache directory
+          id: npm-cache-dir
+          shell: bash
+          run: |
+              echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
+
+        - uses: actions/cache@v3
+          id: npm-cache
+          with:
+              path: ${{ steps.npm-cache-dir.outputs.dir }}
+              key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+              restore-keys: |
+                  ${{ runner.os }}-node-
+
+        - name: Install Dependencies
+          shell: bash
+          env:
+              HUSKY_SKIP_INSTALL: "1"
+              HUSKY: "0"
+          run: |
+              npm ci --ignore-scripts
+              npm run postinstall --if-present

@@ -1,8 +1,9 @@
+import {Octokit} from '@octokit/rest'
+
 import {CreateBranchFactory} from './create-branch'
 import {CreatePrFactory} from './create-pr'
 import {FindBranchPrFactory} from './find-branch-pr'
 import {GetBranchFactory} from './get-branch'
-import {getOctokit} from '@actions/github'
 
 export type CreateClientProps = {
   token: string
@@ -22,7 +23,7 @@ export function createApi({
   owner,
   repo
 }: CreateClientProps): CreateClientResult {
-  const client = getOctokit(token)
+  const client = new Octokit({auth: token})
   return {
     createBranch: CreateBranchFactory({client, owner, repo}),
     getBranch: GetBranchFactory({client, owner, repo}),
