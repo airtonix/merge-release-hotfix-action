@@ -1,10 +1,10 @@
 ---
 name: Merge Release Hotfix
 description: |
-  creates a branch for the current release branch or updates one if it
-  does not exist. Then creates or updates a pull request.
+  Accumulates changes from a source branch into an intermediary branch for merging into one or more other branches in order to keep the source branch free of other target changes.
+ 
 
-author: "Your name or organization here"
+author: "airtonix"
 inputs:
   GithubToken:
     required: true
