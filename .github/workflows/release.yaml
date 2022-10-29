@@ -24,6 +24,9 @@ jobs:
                   fetch-depth: 0
 
             - uses: ./.github/actions/setup-asdf
+              with:
+                  SetupCommand: "./setup.bash"
+
             - uses: ./.github/actions/setup-npm
 
             - name: Create Release
