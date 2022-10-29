@@ -23,7 +23,7 @@ jobs:
               with:
                   fetch-depth: 0
 
-            - uses: ./.github/actions/setup-tooling
+            - uses: ./.github/actions/setup-asdf
             - uses: ./.github/actions/setup-npm
 
             - name: Create Release
@@ -34,4 +34,4 @@ jobs:
                   GIT_COMMITTER_NAME: releasebot
                   GITHUB_TOKEN: ${{ secrets.RELEASE_BOT_GITHUB_TOKEN }}
                   NPM_TOKEN: ${{ secrets.RELEASE_BOT_NPM_TOKEN }}
-              run: npm release
+              run: npm run release
