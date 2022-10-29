@@ -1,8 +1,9 @@
+import {Octokit} from '@octokit/rest'
+
 import {CreateBranchFactory} from './create-branch'
 import {CreatePrFactory} from './create-pr'
 import {FindBranchPrFactory} from './find-branch-pr'
 import {GetBranchFactory} from './get-branch'
-import {Octokit} from '@octokit/rest'
 
 export type CreateClientProps = {
   token: string

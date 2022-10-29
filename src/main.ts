@@ -1,9 +1,10 @@
 import * as core from '@actions/core'
-import {Context} from './context'
+
+import {Context} from './context/context'
 import {createApi} from './api'
-import {createContent} from './create-content'
 import {createOrUpdatePr} from './create-or-update-pr'
 import {getOrCreateBranch} from './get-or-create-branch'
+import {createContent, slugify} from './content'
 
 async function run(): Promise<void> {
   try {
@@ -32,12 +33,23 @@ async function run(): Promise<void> {
     )
 
     for (const targetRef of targetRefCollection) {
-      const {body, mergeBranchRef, title} = createContent({
+      const {renderBody, renderBranch, renderTitle} = createContent({
         prBodyTemplate,
         prBranchTemplate,
-        prTitleTemplate,
-        sourceRef,
-        targetRef
+        prTitleTemplate
+      })
+
+      const mergeBranchRef = renderBranch({
+        source: sourceRef,
+        target: slugify(targetRef)
+      })
+      const title = renderTitle({
+        source: sourceRef,
+        target: targetRef
+      })
+      const body = renderBody({
+        source: sourceRef,
+        target: targetRef
       })
 
       await getOrCreateBranch({

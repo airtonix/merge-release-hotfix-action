@@ -1,6 +1,7 @@
 import * as core from '@actions/core'
-import {Maybe} from './types'
 import {Octokit} from '@octokit/rest'
+
+import {Maybe} from './types'
 
 type FindBranchPrFactoryProps = {
   client: Octokit
@@ -9,6 +10,7 @@ type FindBranchPrFactoryProps = {
 }
 type FindPrProps = {
   targetRef: string
+  branchName: string
 }
 export type FindBranchPrResult = {
   number: number
@@ -20,7 +22,8 @@ export function FindBranchPrFactory({
   repo
 }: FindBranchPrFactoryProps) {
   return async function findBranchPr({
-    targetRef
+    targetRef,
+    branchName
   }: FindPrProps): Promise<Maybe<FindBranchPrResult>> {
     const {data} = await client.pulls.list({
       repo,
@@ -28,16 +31,9 @@ export function FindBranchPrFactory({
       base: targetRef
     })
 
-    core.debug(`Search for PR related to ${targetRef}`)
-    for (const pr of data) {
-      core.debug(
-        `PR: [${pr.number}]: head: ${pr.head.ref} base: ${pr.base.ref}`
-      )
-    }
-
-    const pr = data.find(item => {
-      item.head.ref === targetRef
-    })
+    const pr = data.find(
+      item => item.head.ref === branchName && item.base.ref === targetRef
+    )
 
     core.debug(`Found: ${pr?.number}`)
 

@@ -1,6 +1,7 @@
 // Originally pulled from https://github.com/JasonEtco/actions-toolkit/blob/main/src/context.ts
 import {existsSync, readFileSync} from 'fs'
 import {EOL} from 'os'
+
 import {WebhookPayload} from './types'
 
 export class Context {
