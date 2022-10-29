@@ -11,6 +11,7 @@ type GetBranchFactoryProps = {
 
 export type GetBranchResult = {
   sha: string
+  ref: string
 }
 
 export function GetBranchFactory({client, owner, repo}: GetBranchFactoryProps) {
@@ -24,7 +25,10 @@ export function GetBranchFactory({client, owner, repo}: GetBranchFactoryProps) {
         branch
       })
 
-      return {sha: data.commit.sha}
+      return {
+        sha: data.commit.sha,
+        ref: data.name
+      }
     } catch (error) {
       core.error(`Couldn't find branch ${branch}`)
     }
