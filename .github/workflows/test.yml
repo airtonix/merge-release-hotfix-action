@@ -2,6 +2,9 @@
 name: "build-test"
 # rebuild any PRs and main branch changes
 "on":
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
