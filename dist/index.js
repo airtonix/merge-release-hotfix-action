@@ -165,7 +165,17 @@ function FindBranchPrFactory({ client, owner, repo }) {
             core.debug(`Found: ${pr === null || pr === void 0 ? void 0 : pr.number}`);
             return pr
                 ? {
-                    number: pr.number
+                    number: pr.number,
+                    title: pr.title,
+                    body: pr.body,
+                    base: {
+                        ref: pr.base.ref,
+                        sha: pr.base.sha
+                    },
+                    head: {
+                        ref: pr.head.ref,
+                        sha: pr.head.sha
+                    }
                 }
                 : undefined;
         });
@@ -257,9 +267,9 @@ Object.defineProperty(exports, "createApi", ({ enumerable: true, get: function (
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.slugify = exports.createContent = void 0;
+exports.slugify = exports.createTemplateFactory = void 0;
 var templates_1 = __nccwpck_require__(515);
-Object.defineProperty(exports, "createContent", ({ enumerable: true, get: function () { return templates_1.createContent; } }));
+Object.defineProperty(exports, "createTemplateFactory", ({ enumerable: true, get: function () { return templates_1.createTemplateFactory; } }));
 Object.defineProperty(exports, "slugify", ({ enumerable: true, get: function () { return templates_1.slugify; } }));
 
 
@@ -274,14 +284,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createContent = exports.slugify = void 0;
+exports.createTemplateFactory = exports.slugify = void 0;
 const kebabCase_1 = __importDefault(__nccwpck_require__(5852));
 const template_1 = __importDefault(__nccwpck_require__(5762));
 function slugify(text) {
     return (0, kebabCase_1.default)(text.replace(/&/g, '-and-'));
 }
 exports.slugify = slugify;
-function createContent({ prTitleTemplate, prBodyTemplate, prBranchTemplate }) {
+function createTemplateFactory({ prTitleTemplate, prBodyTemplate, prBranchTemplate }) {
     const templateSettings = {
         interpolate: /{{([\s\S]+?)}}/g
     };
@@ -295,7 +305,7 @@ function createContent({ prTitleTemplate, prBodyTemplate, prBranchTemplate }) {
         renderBranch
     };
 }
-exports.createContent = createContent;
+exports.createTemplateFactory = createTemplateFactory;
 
 
 /***/ }),
@@ -400,27 +410,34 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createOrUpdatePr = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const exec_1 = __nccwpck_require__(1514);
-function createOrUpdatePr({ api, title, body, sourceRef, targetRef, mergeBranchRef }) {
+const content_1 = __nccwpck_require__(1629);
+function createOrUpdatePr(api, templates, { sourceRef, targetRef }) {
     return __awaiter(this, void 0, void 0, function* () {
+        const title = templates.renderTitle({ source: sourceRef, target: targetRef });
+        const body = templates.renderTitle({ source: sourceRef, target: targetRef });
+        const mergeBranchRef = templates.renderTitle({
+            source: sourceRef,
+            target: (0, content_1.slugify)(sourceRef)
+        });
         const pr = yield api.findBranchPr({
             targetRef,
             branchName: mergeBranchRef
         });
         if (!pr) {
             core.info(`createOrUpdatePr.createPr: ${sourceRef} -> ${targetRef} as ${mergeBranchRef}`);
-            yield api.createPr({
+            return yield api.createPr({
                 title,
                 body,
                 targetRef,
                 mergeRef: mergeBranchRef
             });
-            return;
         }
         core.info(`createOrUpdatePr.updatePr: ${sourceRef} -> ${targetRef} as ${mergeBranchRef}`);
         yield (0, exec_1.exec)('git', ['fetch']);
         yield (0, exec_1.exec)('git', ['checkout', mergeBranchRef]);
         yield (0, exec_1.exec)('git', ['merge', sourceRef]);
         yield (0, exec_1.exec)('git', ['push', 'origin', 'HEAD']);
+        return pr;
     });
 }
 exports.createOrUpdatePr = createOrUpdatePr;
@@ -429,7 +446,7 @@ exports.createOrUpdatePr = createOrUpdatePr;
 /***/ }),
 
 /***/ 1849:
-/***/ (function(__unused_webpack_module, exports) {
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
@@ -444,8 +461,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getOrCreateBranch = void 0;
-function getOrCreateBranch({ api, sourceRef, mergeBranchRef }) {
+const content_1 = __nccwpck_require__(1629);
+function getOrCreateBranch(api, templates, { sourceRef, targetRef }) {
     return __awaiter(this, void 0, void 0, function* () {
+        const mergeBranchRef = templates.renderTitle({
+            source: sourceRef,
+            target: (0, content_1.slugify)(targetRef)
+        });
         const sourceBranch = yield api.getBranch(sourceRef);
         if (!sourceBranch)
             throw Error('Source branch not found');
@@ -518,39 +540,22 @@ function run() {
                 repo,
                 token
             });
+            const templates = (0, content_1.createTemplateFactory)({
+                prBodyTemplate,
+                prBranchTemplate,
+                prTitleTemplate
+            });
             /**
              * Convert string into unique array of target branches to
              * creates Prs for
              */
             const targetRefCollection = Array.from(new Set(targetRefs.split(',').map(branch => branch.trim())));
             for (const targetRef of targetRefCollection) {
-                const { renderBody, renderBranch, renderTitle } = (0, content_1.createContent)({
-                    prBodyTemplate,
-                    prBranchTemplate,
-                    prTitleTemplate
-                });
-                const mergeBranchRef = renderBranch({
-                    source: sourceRef,
-                    target: (0, content_1.slugify)(targetRef)
-                });
-                const title = renderTitle({
-                    source: sourceRef,
-                    target: targetRef
-                });
-                const body = renderBody({
-                    source: sourceRef,
-                    target: targetRef
-                });
-                yield (0, get_or_create_branch_1.getOrCreateBranch)({
-                    api,
+                yield (0, get_or_create_branch_1.getOrCreateBranch)(api, templates, {
                     sourceRef,
-                    mergeBranchRef
+                    targetRef
                 });
-                yield (0, create_or_update_pr_1.createOrUpdatePr)({
-                    api,
-                    title,
-                    body,
-                    mergeBranchRef,
+                yield (0, create_or_update_pr_1.createOrUpdatePr)(api, templates, {
                     sourceRef,
                     targetRef
                 });
