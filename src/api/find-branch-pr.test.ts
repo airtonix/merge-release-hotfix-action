@@ -1,16 +1,9 @@
 import {Moctokit} from '@kie/mock-github'
 import {faker} from '@faker-js/faker'
 
-import {createApi} from './factory'
+import type {FindPrResponseCollection} from '../types'
 
-type MoctokitInstance = InstanceType<typeof Moctokit>
-type FindPrResponseCollection = NonNullable<
-  NonNullable<
-    Parameters<
-      ReturnType<MoctokitInstance['rest']['pulls']['list']>['reply']
-    >[0]
-  >['data']
->
+import {createApi} from './factory'
 
 describe('api/findBranchPr', () => {
   it('finds the pr', async () => {

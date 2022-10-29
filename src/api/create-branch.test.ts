@@ -1,23 +1,9 @@
 import {Moctokit} from '@kie/mock-github'
 import {faker} from '@faker-js/faker'
 
-import {createApi} from './factory'
+import type {CreateBranchResponse, GetBranchResponse} from '../types'
 
-type MoctokitInstance = InstanceType<typeof Moctokit>
-type CreateBranchResponse = NonNullable<
-  NonNullable<
-    Parameters<
-      ReturnType<MoctokitInstance['rest']['git']['createRef']>['reply']
-    >[0]
-  >['data']
->
-type GetBranchResponse = NonNullable<
-  NonNullable<
-    Parameters<
-      ReturnType<MoctokitInstance['rest']['repos']['getBranch']>['reply']
-    >[0]
-  >['data']
->
+import {createApi} from './factory'
 
 describe('api/createBranch', () => {
   it('creates the branch', async () => {

@@ -9,7 +9,7 @@
   },
   "overrides": [
     {
-      "files": ["**/*.test.ts", "**/*.ts"],
+      "files": ["**/*.test.ts", "**/*.ts", "*.ts"],
 
       "parserOptions": {
         "ecmaVersion": 9,

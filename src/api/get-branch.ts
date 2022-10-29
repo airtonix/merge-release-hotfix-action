@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import {Octokit} from '@octokit/rest'
 
-import {Maybe} from './types'
+import {Maybe} from '../types'
 
 type GetBranchFactoryProps = {
   client: Octokit

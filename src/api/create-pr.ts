@@ -1,6 +1,6 @@
 import {Octokit} from '@octokit/rest'
 
-import {Maybe} from './types'
+import {Maybe} from '../types'
 
 export type CreatePrResult = {
   number: number

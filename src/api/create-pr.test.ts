@@ -1,16 +1,9 @@
 import {Moctokit} from '@kie/mock-github'
 import {faker} from '@faker-js/faker'
 
-import {createApi} from './factory'
+import type {CreatePrResponseCollection} from '../types'
 
-type MoctokitInstance = InstanceType<typeof Moctokit>
-type CreatePrResponseCollection = NonNullable<
-  NonNullable<
-    Parameters<
-      ReturnType<MoctokitInstance['rest']['pulls']['create']>['reply']
-    >[0]
-  >['data']
->
+import {createApi} from './factory'
 
 describe('api/createPr', () => {
   it('creates the pr', async () => {
