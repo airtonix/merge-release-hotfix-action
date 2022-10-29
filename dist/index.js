@@ -414,10 +414,10 @@ const content_1 = __nccwpck_require__(1629);
 function createOrUpdatePr(api, templates, { sourceRef, targetRef }) {
     return __awaiter(this, void 0, void 0, function* () {
         const title = templates.renderTitle({ source: sourceRef, target: targetRef });
-        const body = templates.renderTitle({ source: sourceRef, target: targetRef });
-        const mergeBranchRef = templates.renderTitle({
-            source: sourceRef,
-            target: (0, content_1.slugify)(sourceRef)
+        const body = templates.renderBody({ source: sourceRef, target: targetRef });
+        const mergeBranchRef = templates.renderBranch({
+            source: (0, content_1.slugify)(sourceRef),
+            target: (0, content_1.slugify)(targetRef)
         });
         const pr = yield api.findBranchPr({
             targetRef,
@@ -464,8 +464,8 @@ exports.getOrCreateBranch = void 0;
 const content_1 = __nccwpck_require__(1629);
 function getOrCreateBranch(api, templates, { sourceRef, targetRef }) {
     return __awaiter(this, void 0, void 0, function* () {
-        const mergeBranchRef = templates.renderTitle({
-            source: sourceRef,
+        const mergeBranchRef = templates.renderBranch({
+            source: (0, content_1.slugify)(sourceRef),
             target: (0, content_1.slugify)(targetRef)
         });
         const sourceBranch = yield api.getBranch(sourceRef);
