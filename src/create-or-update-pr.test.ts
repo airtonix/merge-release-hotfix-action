@@ -23,7 +23,7 @@ jest.mock('@actions/exec', () => {
 })
 
 describe('create-or-update-pr', () => {
-  it('branch-exists-creates-new-pr', async () => {
+  it('creates-new-pr', async () => {
     const EXPECTED_SHA = faker.datatype.uuid()
     const SOURCE_BRANCH = 'release/v1.1.1'
     const EXPECTED_TARGET_SHA = faker.git.commitSha()
@@ -130,7 +130,7 @@ describe('create-or-update-pr', () => {
     expect(result?.head.ref).toBe(EXPECTED_INTERMEDIATE_BRANCH_REF)
   })
 
-  it('branch-exists-updates-pr', async () => {
+  it('updates-pr', async () => {
     const EXPECTED_SHA = faker.datatype.uuid()
     const SOURCE_BRANCH = 'release/v1.1.1'
     const EXPECTED_TARGET_SHA = faker.git.commitSha()
