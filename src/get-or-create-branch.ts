@@ -15,8 +15,8 @@ export async function getOrCreateBranch(
   templates: TemplateFactory,
   {sourceRef, targetRef}: GetOrCreateBranchProps
 ): Promise<ReturnType<Api['getBranch'] | Api['createBranch']>> {
-  const mergeBranchRef = templates.renderTitle({
-    source: sourceRef,
+  const mergeBranchRef = templates.renderBranch({
+    source: slugify(sourceRef),
     target: slugify(targetRef)
   })
   const sourceBranch = await api.getBranch(sourceRef)

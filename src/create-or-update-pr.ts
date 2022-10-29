@@ -23,10 +23,10 @@ export async function createOrUpdatePr(
   {sourceRef, targetRef}: CreateOrUpdatePrProps
 ): CreateOrUpdatePrResult {
   const title = templates.renderTitle({source: sourceRef, target: targetRef})
-  const body = templates.renderTitle({source: sourceRef, target: targetRef})
-  const mergeBranchRef = templates.renderTitle({
-    source: sourceRef,
-    target: slugify(sourceRef)
+  const body = templates.renderBody({source: sourceRef, target: targetRef})
+  const mergeBranchRef = templates.renderBranch({
+    source: slugify(sourceRef),
+    target: slugify(targetRef)
   })
 
   const pr = await api.findBranchPr({

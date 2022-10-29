@@ -11,7 +11,8 @@ describe('api/getBranch', () => {
     moctokit.rest.repos
       .getBranch({
         owner: /.*/,
-        repo: /.*/
+        repo: /.*/,
+        branch: /.*/
       })
       .reply({
         status: 200,
