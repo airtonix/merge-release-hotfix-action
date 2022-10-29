@@ -1,46 +1,49 @@
 import * as core from '@actions/core'
-import {Api} from './api'
 import {exec} from '@actions/exec'
 
+import {slugify} from './content'
+import type {Api} from './api'
+import type {FindBranchPrResult} from './api/find-branch-pr'
+import type {TemplateFactory} from './content'
+import {CreatePrResult} from './api/create-pr'
+
 type CreateOrUpdatePrProps = {
-  /** api wrapper */
-  api: Api
-  /** desired PR title */
-  title: string
-  /** desired PR Body */
-  body: string
   /** gitref from where we should pull updates from */
   sourceRef: string
   /** gitref we want to merge into */
   targetRef: string
-  /** our branch that we want to merge into targetRef */
-  mergeBranchRef: string
 }
-type CreateOrUpdatePrResult = Promise<void>
+type CreateOrUpdatePrResult = Promise<
+  FindBranchPrResult | CreatePrResult | undefined
+>
 
-export async function createOrUpdatePr({
-  api,
-  title,
-  body,
-  sourceRef,
-  targetRef,
-  mergeBranchRef
-}: CreateOrUpdatePrProps): CreateOrUpdatePrResult {
+export async function createOrUpdatePr(
+  api: Api,
+  templates: TemplateFactory,
+  {sourceRef, targetRef}: CreateOrUpdatePrProps
+): CreateOrUpdatePrResult {
+  const title = templates.renderTitle({source: sourceRef, target: targetRef})
+  const body = templates.renderBody({source: sourceRef, target: targetRef})
+  const mergeBranchRef = templates.renderBranch({
+    source: slugify(sourceRef),
+    target: slugify(targetRef)
+  })
+
   const pr = await api.findBranchPr({
-    targetRef
+    targetRef,
+    branchName: mergeBranchRef
   })
 
   if (!pr) {
     core.info(
       `createOrUpdatePr.createPr: ${sourceRef} -> ${targetRef} as ${mergeBranchRef}`
     )
-    await api.createPr({
+    return await api.createPr({
       title,
       body,
       targetRef,
       mergeRef: mergeBranchRef
     })
-    return
   }
 
   core.info(
@@ -50,4 +53,6 @@ export async function createOrUpdatePr({
   await exec('git', ['checkout', mergeBranchRef])
   await exec('git', ['merge', sourceRef])
   await exec('git', ['push', 'origin', 'HEAD'])
+
+  return pr
 }

@@ -3,26 +3,23 @@ name: "build-test"
 # rebuild any PRs and main branch changes
 "on":
   pull_request:
-  push:
     branches:
       - main
-      - "releases/*"
+      - "release/*"
 
 jobs:
   # make sure build/ci work properly
-  build:
+  Check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: |
-          npm install
-      - run: |
-          npm run all
-  # make sure the action works on a clean machine without building
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ./
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup-asdf
         with:
-          milliseconds: 1000
+          SetupCommand: "./setup.bash"
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format
+      - run: npm run types
+      - run: npm run build
+      - run: npm run package
+      - run: npm run test
