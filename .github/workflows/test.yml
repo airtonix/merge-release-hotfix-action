@@ -5,7 +5,7 @@ name: "build-test"
   pull_request:
     branches:
       - main
-      - "releases/*"
+      - "release/*"
 
 jobs:
   # make sure build/ci work properly
