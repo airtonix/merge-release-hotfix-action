@@ -39,7 +39,9 @@ export async function getOrCreateBranch(
 
   core.info(`found sha of sourceRef ${sourceRef}: ${sourceBranch.sha}`)
 
-  core.info(`create branch of sourceRef ${sourceRef}: ${sourceBranch.sha}`)
+  core.info(
+    `create branch ${mergeBranchRef} from sourceRef ${sourceRef} at commit ${sourceBranch.sha}`
+  )
   const branch = await api.createBranch({
     branchName: mergeBranchRef,
     sourceSha: sourceBranch.sha
