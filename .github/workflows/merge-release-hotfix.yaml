@@ -2,9 +2,7 @@
 name: "merge-release-hotfix"
 # rebuild any PRs and main branch changes
 "on":
-  pull_request:
-    types:
-      - closed
+  push:
     branches:
       - release/*
 

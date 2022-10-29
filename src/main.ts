@@ -38,11 +38,13 @@ async function run(): Promise<void> {
     )
 
     for (const targetRef of targetRefCollection) {
+      core.debug(`getOrCreateBranch ${targetRef}`)
       await getOrCreateBranch(api, templates, {
         sourceRef,
         targetRef
       })
 
+      core.debug(`createOrUpdatePr ${targetRef}`)
       await createOrUpdatePr(api, templates, {
         sourceRef,
         targetRef

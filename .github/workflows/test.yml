@@ -16,7 +16,7 @@ jobs:
       - uses: ./.github/actions/setup-asdf
         with:
           SetupCommand: "./setup.bash"
-      - run: npm ci
+      - uses: ./.github/actions/setup-npm
       - run: npm run lint
       - run: npm run format
       - run: npm run types
