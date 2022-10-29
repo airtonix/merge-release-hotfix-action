@@ -1,3 +1,4 @@
+import {exec} from '@actions/exec'
 import {Moctokit} from '@kie/mock-github'
 import {faker} from '@faker-js/faker'
 
@@ -9,6 +10,17 @@ import type {
   FindPrResponseCollection,
   GetBranchResponse
 } from './types'
+
+jest.mock('@actions/exec', () => {
+  const originalModule = jest.requireActual('@actions/exec')
+
+  //Mock the default export and named export 'exec'
+  return {
+    __esModule: true,
+    ...originalModule,
+    exec: jest.fn(() => 'exec mocked')
+  }
+})
 
 describe('create-or-update-pr', () => {
   it('branch-exists-creates-new-pr', async () => {
@@ -121,16 +133,17 @@ describe('create-or-update-pr', () => {
   it('branch-exists-updates-pr', async () => {
     const EXPECTED_SHA = faker.datatype.uuid()
     const SOURCE_BRANCH = 'release/v1.1.1'
+    const EXPECTED_TARGET_SHA = faker.git.commitSha()
     const EXPECTED_TARGET_REF = 'main'
     const EXPECTED_TITLE = `${SOURCE_BRANCH} to ${EXPECTED_TARGET_REF}`
     const EXPECTED_BODY = `${SOURCE_BRANCH} to ${EXPECTED_TARGET_REF}`
+    const EXPECTED_INTERMEDIATE_BRANCH_SHA = faker.git.commitSha()
     const EXPECTED_INTERMEDIATE_BRANCH_REF = `merge/${slugify(
       SOURCE_BRANCH
     )}-to-${slugify(EXPECTED_TARGET_REF)}`
     const EXPECTED_PR_NUMBER = faker.datatype.number()
 
     const moctokit = new Moctokit()
-
     // branch exists
     moctokit.rest.repos
       .getBranch({
@@ -159,23 +172,34 @@ describe('create-or-update-pr', () => {
         data: [
           {
             number: faker.datatype.number(),
+            title: faker.lorem.sentence(),
+            body: faker.lorem.sentence(),
             head: {ref: faker.datatype.string()},
-            base: {ref: EXPECTED_TARGET_REF}
+            base: {ref: EXPECTED_TARGET_REF, sha: EXPECTED_TARGET_SHA}
           },
           {
             number: faker.datatype.number(),
+            title: faker.lorem.sentence(),
+            body: faker.lorem.sentence(),
             head: {ref: faker.datatype.string()},
-            base: {ref: EXPECTED_TARGET_REF}
+            base: {ref: EXPECTED_TARGET_REF, sha: EXPECTED_TARGET_SHA}
           },
           {
             number: EXPECTED_PR_NUMBER,
-            head: {ref: EXPECTED_INTERMEDIATE_BRANCH_REF},
-            base: {ref: EXPECTED_TARGET_REF}
+            title: EXPECTED_TITLE,
+            body: EXPECTED_BODY,
+            head: {
+              ref: EXPECTED_INTERMEDIATE_BRANCH_REF,
+              sha: EXPECTED_INTERMEDIATE_BRANCH_SHA
+            },
+            base: {ref: EXPECTED_TARGET_REF, sha: EXPECTED_TARGET_SHA}
           },
           {
             number: faker.datatype.number(),
+            title: faker.lorem.sentence(),
+            body: faker.lorem.sentence(),
             head: {ref: faker.datatype.string()},
-            base: {ref: EXPECTED_TARGET_REF}
+            base: {ref: EXPECTED_TARGET_REF, sha: EXPECTED_TARGET_SHA}
           }
         ] as FindPrResponseCollection
       })
@@ -195,6 +219,8 @@ describe('create-or-update-pr', () => {
       sourceRef: SOURCE_BRANCH,
       targetRef: EXPECTED_TARGET_REF
     })
+
+    expect(exec).toHaveBeenCalled()
 
     expect(result?.title).toBe(EXPECTED_TITLE)
     expect(result?.body).toBe(EXPECTED_BODY)
