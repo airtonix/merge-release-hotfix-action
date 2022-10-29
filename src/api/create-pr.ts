@@ -4,6 +4,10 @@ import {Maybe} from './types'
 
 export type CreatePrResult = {
   number: number
+  title: string
+  body: string | null
+  base: {sha: string; ref: string}
+  head: {sha: string; ref: string}
 }
 
 type CreatePrFactoryProps = {
@@ -36,7 +40,17 @@ export function CreatePrFactory({client, owner, repo}: CreatePrFactoryProps) {
     })
 
     return {
-      number: data.number
+      number: data.number,
+      title: data.title,
+      body: data.body,
+      base: {
+        ref: data.base.ref,
+        sha: data.base.sha
+      },
+      head: {
+        ref: data.head.ref,
+        sha: data.head.sha
+      }
     }
   }
 }
