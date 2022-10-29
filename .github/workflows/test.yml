@@ -3,7 +3,6 @@ name: "build-test"
 # rebuild any PRs and main branch changes
 "on":
   pull_request:
-  push:
     branches:
       - main
       - "releases/*"
@@ -24,16 +23,3 @@ jobs:
       - run: npm run build
       - run: npm run package
       - run: npm run test
-
-  # make sure the action works on a clean machine without building
-  SelfTest:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Self test
-        id: selftest
-        uses: ./
-        with:
-          GithubToken: ${{secrets.GITHUB_TOKEN}}
-          SourceRef: ${{github.ref_name}}
-          TargetRefs: main
