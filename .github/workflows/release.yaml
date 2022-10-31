@@ -17,8 +17,16 @@ concurrency:
 jobs:
     release:
         runs-on: ubuntu-latest
+
         if: "!contains(github.event.head_commit.message, 'ci skip') && !contains(github.event.head_commit.message, 'skip ci')"
+
         steps:
+            - uses: wow-actions/use-app-token@v1
+              id: generate_token
+              with:
+                  app_id: ${{ secrets.ACTIONBOT_APPID }}
+                  private_key: ${{ secrets.ACTIONBOT_PRIVATEKEY }}
+
             - uses: actions/checkout@v3
               with:
                   fetch-depth: 0
@@ -35,5 +43,5 @@ jobs:
                   GIT_COMMITTER_EMAIL: airtonix@users.noreply.github.com
                   GIT_AUTHOR_NAME: releasebot
                   GIT_COMMITTER_NAME: releasebot
-                  GITHUB_TOKEN: ${{ secrets.RELEASE_BOT_GITHUB_TOKEN }}
+                  GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
               run: npm run release

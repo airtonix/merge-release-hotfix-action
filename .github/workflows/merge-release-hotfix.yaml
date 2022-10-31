@@ -27,11 +27,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: wow-actions/use-app-token@v1
+        id: generate_token
+        with:
+          app_id: ${{ secrets.ACTIONBOT_APPID }}
+          private_key: ${{ secrets.ACTIONBOT_PRIVATEKEY }}
+
       - name: update
         id: action
         uses: ./
         with:
-          GithubToken: ${{secrets.GITHUB_TOKEN}}
+          GithubToken: ${{ steps.generate_token.outputs.token }}
           SourceRef: ${{github.ref_name}}
           TargetRefs: main
           PrBranchNameTemplate: "chore/merge-{{source}}-to-{{target}}"

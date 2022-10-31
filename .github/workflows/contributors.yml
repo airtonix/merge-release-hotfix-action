@@ -11,16 +11,24 @@ jobs:
   contributors:
     runs-on: ubuntu-latest
     steps:
+      - uses: wow-actions/use-app-token@v1
+        id: generate_token
+        with:
+          app_id: ${{ secrets.ACTIONBOT_APPID }}
+          private_key: ${{ secrets.ACTIONBOT_PRIVATEKEY }}
+
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
       - uses: wow-actions/update-contributors@v1
         with:
           include_bots: false
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+
       - uses: wow-actions/contributors-list@v1
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
           userNameHeight: 19
           includeBots: false
           itemTemplate: >
@@ -40,9 +48,10 @@ jobs:
                 xlink:href="{{{ avatar }}}"
               />
             </a>
+
       - name: Create a PR
         uses: peter-evans/create-pull-request@v3
         with:
           commit-message: Update Contributors
           title: "[automated] Update Contributors File"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.generate_token.outputs.token }}
