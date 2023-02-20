@@ -36,7 +36,7 @@
     "@auto-it/first-time-contributor": "10.37.6",
     "@auto-it/git-tag": "^10.37.6",
     "@commitlint/cli": "~17.0.3",
-    "@commitlint/config-conventional": "~17.0.0",
+    "@commitlint/config-conventional": "~17.4.4",
     "@faker-js/faker": "^7.6.0",
     "@kie/mock-github": "^0.0.2",
     "@octokit/request-error": "3.0.2",
